@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2df4230138177ad9fc86185f2c8ad80ff0e3f3cc">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup theme-color -->
+<!-- start theme color meta headers -->
+<meta name="theme-color" content="#151515">
+<meta name="msapplication-navbutton-color" content="#151515">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- end theme color meta headers -->
+
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Windows of Opportunity (rev) | James Joseph Portfolio</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Windows of Opportunity (rev)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<link rel="canonical" href="http://localhost:4000/HTB_University_CTF_2023/windows_of_opportunity" />
+<meta property="og:url" content="http://localhost:4000/HTB_University_CTF_2023/windows_of_opportunity" />
+<meta property="og:site_name" content="James Joseph Portfolio" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Windows of Opportunity (rev)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"Windows of Opportunity (rev)","url":"http://localhost:4000/HTB_University_CTF_2023/windows_of_opportunity"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" href="/">
+          <h1>James Joseph Portfolio</h1>
+        </a>
+        <h2>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</h2>
+
+        <section id="downloads">
+          
+          <a href="https://github.com/JamesOttoJ/jamesottoj.github.io" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1 id="windows-of-opportunity-rev">Windows of Opportunity (rev)</h1>
+<h3 id="starting-out">Starting out</h3>
+<p>As with any reversing problem, I start by running <code class="language-plaintext highlighter-rouge">strings</code> on it. Strings allows me to see any, well, strings that are in the program.<br />
+<img src="./../imgs/strings_windows.png" alt="strings output" title="Strings output" /><br />
+In strings, we can see that this is a basic password challenge. Essentially, there is a password hidden inside the file so that the input can be checked. To find this password, we must now disassemble the program and look at what it’s really doing.</p>
+
+<h3 id="disassembly-with-gidra">Disassembly with Gidra</h3>
+<p>Once the program is loaded into Ghidra, we can navigate to the main function and get a feel for how the program is meant to work.<br />
+<img src="/imgs/windows_main.png" alt="ghidra main" /><br />
+Because this program is fairly simple, the code given by Ghidra is pretty accurate. From that, we can see that the code takes the user input and itterates through each character. For each of the characters, it adds the integer value of the current character and the next character before checking to see if it exists in an array. We know that the fist characters are going to be H, T, B, and {, so we can check our assumptions by adding their integer values (72, 84, 66, and 123 respecively). Double clicking on the array name in Ghidra brings us to where the value is stored, and we can see that it matches up</p>
+
+<p>Array (decimal): 156 150 189 175 147 195 148 96 162 209 194 207 156 163 166 104 148 193 215 172 150 147 147 214 168 159 210 148 167 214 143 160 163 161 163 86 158
+72 + 84 = 156, 84 + 66 = 150, 66 + 123 = 189, 123 + ? = 175</p>
+
+<h3 id="solution">Solution</h3>
+<p>The next step is to figure out how to get the other characters. Based on the calculation above, we can see that we only need to solve for the next character by taking the current value in the array and subtracting the current known value. For the last equation above, we get 175 - 123 = 52. 52 on the ASCII table is ‘4’. To speed up the process, I wrote a quick <a href="/HTB_University_CTF_2023/windows_solve.py">script</a> that can automatically do this for us.</p>
+
+      </section>
+    </div>
+  </body>
+</html>
