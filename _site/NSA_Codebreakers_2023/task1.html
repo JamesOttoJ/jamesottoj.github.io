@@ -4,7 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/style.css?v=2df4230138177ad9fc86185f2c8ad80ff0e3f3cc">
+    <link rel="stylesheet" href="/assets/css/style.css?v=b9e9af17ccfc5f67f039c31d3aaca36a0df4d51f">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup theme-color -->
@@ -26,20 +26,20 @@
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Coming Soon… | James Joseph Portfolio</title>
+<title>TASK 1 | James Joseph Portfolio</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Coming Soon…" />
+<meta property="og:title" content="TASK 1" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
-<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<meta name="description" content="Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs" />
+<meta property="og:description" content="Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs" />
 <link rel="canonical" href="http://localhost:4000/NSA_Codebreakers_2023/task1" />
 <meta property="og:url" content="http://localhost:4000/NSA_Codebreakers_2023/task1" />
 <meta property="og:site_name" content="James Joseph Portfolio" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Coming Soon…" />
+<meta property="twitter:title" content="TASK 1" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"Coming Soon…","url":"http://localhost:4000/NSA_Codebreakers_2023/task1"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs","headline":"TASK 1","url":"http://localhost:4000/NSA_Codebreakers_2023/task1"}</script>
 <!-- End Jekyll SEO tag -->
 
   </head>
@@ -51,7 +51,7 @@
         <a id="a-title" href="/">
           <h1>James Joseph Portfolio</h1>
         </a>
-        <h2>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</h2>
+        <h2>Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs</h2>
 
         <section id="downloads">
           
@@ -62,7 +62,48 @@
 
     <div class="container">
       <section id="main_content">
-        <h1 id="coming-soon">Coming Soon…</h1>
+        <h1 id="task-1">TASK 1</h1>
+<ul>
+  <li><a href="#where-to-start">Where to start</a></li>
+  <li><a href="#analyzing-the-database">Analyzing the Database</a></li>
+</ul>
+
+<h3 id="task-description">Task Description</h3>
+<blockquote>
+  <p>The US Coast Guard (USCG) recorded an unregistered signal over 30 nautical miles away from the continental US (OCONUS). NSA is contacted to see if we have a record of a similar signal in our databases. The Coast guard provides a copy of the signal data. Your job is to provide the USCG any colluding records from NSA databases that could hint at the object’s location. Per instructions from the USCG, to raise the likelihood of discovering the source of the signal, they need multiple corresponding entries from the NSA database whose geographic coordinates are within 1/100th of a degree. Additionally, record timestamps should be no greater than 10 minutes apart.</p>
+</blockquote>
+
+<h3 id="files-given">Files Given</h3>
+<p>USCG.log (A file holding metadata for the signal)<br />
+database.db (a sql database with a list of signals from the NSAs collection)</p>
+
+<h3 id="where-to-start">Where to Start</h3>
+<p>The easiest place to look is the log. Running <code class="language-plaintext highlighter-rouge">file USCG.log</code> shows that the file is a simple JSON file. Once we run <code class="language-plaintext highlighter-rouge">cat USCG.log</code> or just open it up in a file editor we see this:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="s2">"28.52255"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-91.63558"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02/08/2023, 04:12:40"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>From this file, we can see a couple ways to filter the database. Between trying to filter by dates or floats, I will go for floats any day. The next step is to find data in the database to filter</p>
+
+<h3 id="analyzing-the-database">Analyzing the Database</h3>
+<p>I’m working on linux, so I downloaded the <a href="https://sqlite.org/2023/sqlite-tools-linux-x64-3440200.zip">sqlite package</a> to get the binary. After running the binary, a sqlite shell will pop up. From here there are two type of commands that can be run: sql querries and dot commands. SQL queries work like normal, but dot commands are sqlite-specific commands to interface with data sources. To get the database info into the sqlite instace, run <code class="language-plaintext highlighter-rouge">.open database.db</code> if you’re in the folder where you downloaded database.db. The next step from here is to figure out what the datbase looks like. To do this, there are two main commands to look at. <code class="language-plaintext highlighter-rouge">.tables</code> will print out all of the tables holding data. From here the collumn names can be found by running <code class="language-plaintext highlighter-rouge">.schema [tableName]</code></p>
+
+<p>From this enumeration, we get four tables (audio_object, event, location, timestamp), but the most relavent ones are location and timestamp. We could search by either the location or date, but I personally think that location is easier. To scan through location, I used this SQL query: <code class="language-plaintext highlighter-rouge">SELECT * FROM location WHERE ABS(latitude-28.52) &lt; 0.03;</code></p>
+
+<p>Breaking down this query, we start with <code class="language-plaintext highlighter-rouge">SELECT *</code> which selects all the available columns from the table. Next, <code class="language-plaintext highlighter-rouge">FROM location</code> means that we’re pulling from the location table. Lastly, <code class="language-plaintext highlighter-rouge">WHERE ABS(latitude-28.52) &lt; 0.03;</code> means that only entries whose latitude value fits |latitude - 28.52| &lt; 0.03 will be shown. this is the best way to do floats because we can get how far away the latitude value is from the value we want and then filter to make sure the distance is less than 0.03. I chose 0.03 because the task specifies a variation of 0.01, but I wanted to make sure rounding wouldn’t cause a problem. This query then shows two locations:</p>
+
+<p>874|28.5293|-91.63676|0 m<br />
+969|28.53213|-91.64326|0 m</p>
+
+<p>The first collumn is the location ID. The second collumn is the latitude. The third collumn is the longitude, The last collumn is the elevation. Both of these fit, but I also decided to double check the results by doing a similar query with the longitude: <code class="language-plaintext highlighter-rouge">SELECT * FROM location WHERE ABS(longitude+91.63) &lt; 0.03;</code>. That resulted in the same location, so I knew I was set. The last thing to get is the event ID and the timestamps. To get the event ID, run <code class="language-plaintext highlighter-rouge">SELECT * FROM event WHERE location_id=874;</code> and <code class="language-plaintext highlighter-rouge">SELECT * FROM event WHERE location_id=969;</code>. From these, we can see that the event ID and the timestamp ID are the same as the location ID. To tripple check, I looked at the timestamp with <code class="language-plaintext highlighter-rouge">sqlite&gt; SELECT * FROM timestamp WHERE id=969 OR id=874;</code> and saw that they were in the 10 minute range</p>
+
+<p><strong>ANSWER</strong>:874 969</p>
 
       </section>
     </div>

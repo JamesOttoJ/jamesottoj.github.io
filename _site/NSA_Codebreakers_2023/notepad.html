@@ -4,7 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/style.css?v=2df4230138177ad9fc86185f2c8ad80ff0e3f3cc">
+    <link rel="stylesheet" href="/assets/css/style.css?v=b9e9af17ccfc5f67f039c31d3aaca36a0df4d51f">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup theme-color -->
@@ -26,20 +26,20 @@
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Coming Soon… | James Joseph Portfolio</title>
+<title>Collection of Raw Notes | James Joseph Portfolio</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Coming Soon…" />
+<meta property="og:title" content="Collection of Raw Notes" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
-<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description." />
+<meta name="description" content="Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs" />
+<meta property="og:description" content="Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs" />
 <link rel="canonical" href="http://localhost:4000/NSA_Codebreakers_2023/notepad" />
 <meta property="og:url" content="http://localhost:4000/NSA_Codebreakers_2023/notepad" />
 <meta property="og:site_name" content="James Joseph Portfolio" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Coming Soon…" />
+<meta property="twitter:title" content="Collection of Raw Notes" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"Coming Soon…","url":"http://localhost:4000/NSA_Codebreakers_2023/notepad"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs","headline":"Collection of Raw Notes","url":"http://localhost:4000/NSA_Codebreakers_2023/notepad"}</script>
 <!-- End Jekyll SEO tag -->
 
   </head>
@@ -51,7 +51,7 @@
         <a id="a-title" href="/">
           <h1>James Joseph Portfolio</h1>
         </a>
-        <h2>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</h2>
+        <h2>Writups for my exploits in CTFs and other domains. I love reverse engineering and figuring out programs</h2>
 
         <section id="downloads">
           
@@ -62,7 +62,415 @@
 
     <div class="container">
       <section id="main_content">
-        <h1 id="coming-soon">Coming Soon…</h1>
+        <h1 id="collection-of-raw-notes">Collection of Raw Notes</h1>
+
+<ul>
+  <li><a href="#task-1">Task 1</a></li>
+  <li><a href="#task-2">Task 2</a></li>
+  <li><a href="#task-3">Task 3</a></li>
+  <li><a href="#task-4">Task 4</a></li>
+  <li><a href="#task-5">Task 5</a></li>
+  <li><a href="#task-6">Task 6</a></li>
+</ul>
+
+<h3 id="task-1">TASK 1</h3>
+
+<p>To get tables:<br />
+<code class="language-plaintext highlighter-rouge">.tables</code></p>
+
+<p>To get column names:<br />
+<code class="language-plaintext highlighter-rouge">.schema tableName</code></p>
+
+<p>Found the database, need matching reccords:<br />
+sqlite&gt; <code class="language-plaintext highlighter-rouge">SELECT * FROM location WHERE ABS(latitude-28.52) &lt; 0.01;</code><br />
+874|28.5293|-91.63676|0 m<br />
+sqlite&gt; <code class="language-plaintext highlighter-rouge">SELECT * FROM location WHERE ABS(longitude+91.63) &lt; 0.01;</code><br />
+874|28.5293|-91.63676|0 m</p>
+
+<p>location ID: 874</p>
+
+<p>sqlite&gt; SELECT * FROM event WHERE location_id=874;<br />
+id|location_id|name|audio_object_id|timestamp_id<br />
+874|874|a48fea3f980821c656598ec0cadf9c6aed2fcdaeb4297d656d9cdd4de1a3a703|874|874</p>
+
+<p>sqlite&gt; SELECT * FROM timestamp WHERE recDate=’02/08/2023’;<br />
+id|recTime|recDate<br />
+746|00:27:17|02/08/2023<br />
+874|04:16:31|02/08/2023<br />
+969|04:18:53|02/08/2023</p>
+
+<p>sqlite&gt; SELECT * FROM location WHERE ABS(latitude-28.52) &lt; 0.03;<br />
+874|28.5293|-91.63676|0 m<br />
+969|28.53213|-91.64326|0 m<br />
+sqlite&gt; SELECT * FROM location WHERE ABS(longitude+91.63) &lt; 0.03;<br />
+874|28.5293|-91.63676|0 m<br />
+969|28.53213|-91.64326|0 m</p>
+
+<p>sqlite&gt; SELECT * FROM timestamp WHERE id=969 OR id=874;<br />
+874|04:16:31|02/08/2023<br />
+969|04:18:53|02/08/2023</p>
+
+<h3 id="task-2">TASK 2</h3>
+
+<p>Method:</p>
+
+<ol>
+  <li>start by looking up text on the datasheet</li>
+  <li>See that Ras Pi 3 b has a BCM2837
+    <ol>
+      <li>Look at how Ras Pi is dealing with GPIO pinouts</li>
+      <li>What’s the difference between 3.3v and 5v? 3.3 is more controlled power</li>
+      <li>Ground is ground, any will work</li>
+    </ol>
+  </li>
+  <li>Look up “BCM2837 datasheet”, you’ll find a PDF</li>
+  <li>In that PDF, look for information about GPIO pins</li>
+  <li>You’ll find a chart with what each GPIO pin is for</li>
+  <li>Which column to use? (This is where the boot log comes in)</li>
+  <li>You can see that the header has default and ALT1-5, the boot shows ALT5</li>
+  <li>In the legend underneath, we can look for which ones send and receive over UART (usually Tx for transmit and Rx for receive)</li>
+  <li>Look for the pins set to Tx and Rx in the datasheet (this is the number on the pins labeled as GPIO in the pinout)</li>
+  <li>Count which physical pin for the 3.3v, ground, Tx, and Rx. submit it as P#<br />
+https://usermanual.wiki/Datasheet/BCM2837ARMPeripheralsBroadcom.1054296467</li>
+</ol>
+
+<h3 id="task-3">TASK 3</h3>
+
+<p>env variables of interest:<br />
+ivaddr=467a0010<br />
+kernel_addr_r=40400000<br />
+keyaddr=467a0000</p>
+
+<p>use md to see what’s the address. Keep in mind that each <em>block</em> is little endian<br />
+so, a result of 00112233 44556677 from <code class="language-plaintext highlighter-rouge">md 0</code> is:<br />
+0x0: 33<br />
+0x1: 22<br />
+0x2: 11<br />
+0x3: 00<br />
+0x4: 77<br />
+0x5: 66<br />
+0x6: 55<br />
+0x7: 44<br />
+to get it in the right order, use <code class="language-plaintext highlighter-rouge">md.b address</code> to look at bytes<br />
+<code class="language-plaintext highlighter-rouge">md.b 0</code> would show up as: “33 22 11 00 77 66 55 44” from before<br />
+key at key addr: f0eced4c9ef21abec6403b00c44adfb3</p>
+
+<h3 id="task-4">TASK 4</h3>
+
+<p>Want to find: encryption password</p>
+
+<p>Pop into basic linux shell as root</p>
+
+<p>four “devices” of interest<br />
+/dev/mmcblk0p1 : Mounted to the (/) root directory and is on the SD card<br />
+/dev/mmcblk0p2 : Mounted to the /boot directory and is on the SD card<br />
+/dev/sda1 :<br />
+On the USB<br />
+mounted to /opt<br />
+seems to hold the encrypted data we want<br />
+/dev/sda2 :<br />
+On the usb<br />
+mounted to /private<br />
+seems to hold the private keys for encryption</p>
+
+<p>(found via <code class="language-plaintext highlighter-rouge">fdisk -l</code> and <code class="language-plaintext highlighter-rouge">mount</code>)</p>
+
+<p>private:<br />
+total 40<br />
+drwxr-xr-x 3 root 0 4096 May 15 2022 .<br />
+drwxr-xr-x 21 root 0 4096 Jan 1 00:01 ..<br />
+-rw——- 1 root 0 96 May 15 2022 ecc_p256_private.bin<br />
+-rw——- 1 root 0 64 May 15 2022 ecc_p256_pub.bin<br />
+-rw——- 1 root 0 36 May 15 2022 id.txt<br />
+-rw——- 1 root 0 387 May 15 2022 id_ed25519<br />
+drw——- 2 root 0 16384 May 15 2022 lost+found (empty)</p>
+
+<p>opt:<br />
+total 28740<br />
+drwxr-xr-x 4 root 0 4096 May 15 2022 .<br />
+drwxr-xr-x 21 root 0 4096 Jan 1 00:01 ..<br />
+drwx—— 2 root 0 4096 May 15 2022 .ssh (empty)<br />
+-rw-r–r– 1 root 0 11 May 15 2022 hostname<br />
+drwx—— 2 root 0 16384 May 15 2022 lost+found (empty)<br />
+-rwxrwx— 1 root 0 443 May 15 2022 mount_part<br />
+-rw-r–r– 1 root 0 29360128 May 15 2022 part.enc</p>
+
+<p>mount_part</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/bin/sh
+
+SEC_DRIVE=$1
+SEC_MOUNT=$2
+ENC_PARTITION=$3
+ENC_MOUNT=$4
+
+[ ! -e $ENC_PARTITION ] &amp;&amp; { echo "encrypted partition not found"; exit 1; }
+
+mkdir -p $SEC_MOUNT
+mount $SEC_DRIVE $SEC_MOUNT
+NAME=`hostname`
+ID=`cat /private/id.txt`
+
+DATA="${NAME}${ID:0:3}"
+echo "cryptsetup: opening $ENC_PARTITION"
+echo -n $DATA | openssl sha1 | awk '{print $NF}' | cryptsetup open $ENC_PARTITION part
+mkdir -p $ENC_MOUNT
+mount /dev/mapper/part $ENC_MOUNT
+</code></pre></div></div>
+
+<p>SEC_DRIVE=/dev/sda2<br />
+SEC_MOUNT=/private<br />
+ENC_PARTITION=/opt/part.enc<br />
+ENC_MOUNT=/agent</p>
+
+<p><code class="language-plaintext highlighter-rouge">cryptsetup open /opt/part.enc part</code> asks for key input</p>
+
+<p>hashcat –stdout -a 6 -1?l?u?d ./hostname.txt ?1?1?1 &gt; base_passwords.txt</p>
+
+<pre><code class="language-encrypt.sh">while read LINE; do
+  echo -n "$LINE" | openssl sha1 | awk '{print $NF}' &gt;&gt; passwords.txt
+done &lt;base_passwords.txt
+</code></pre>
+
+<p>hashcat -m 14600 -a 0 -w 3 part.enc passwords.txt -o luks_password.txt</p>
+
+<p>password: 08cd7ef68a46dba71da0ce56c9488110a638387f<br />
+pre-sha1: crazyfence282</p>
+
+<h3 id="task-5">TASK 5</h3>
+
+<p>Want to find: IP address</p>
+
+<p>Encrypted files in /agent</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>total 19944
+drwxr-xr-x    3 root     0             4096 May 15  2022 .
+drwxr-xr-x   21 root     0             4096 Jan  1 02:11 ..
+-rwxr-xr-x    1 root     0           891224 May 15  2022 agent
+-rw-r--r--    1 root     0                0 May 15  2022 agent_restart
+-rw-r-----    1 root     0              567 May 15  2022 config
+-rwx--x--x    1 root     0          7975035 May 15  2022 diagclient
+-rwxr-xr-x    1 root     0         11483488 May 15  2022 dropper
+drwx------    2 root     0            16384 May 15  2022 lost+found
+-rwxrwx---    1 root     0              396 May 15  2022 start
+</code></pre></div></div>
+
+<p>start</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+
+<span class="nv">DIR</span><span class="o">=</span>/agent
+<span class="nv">PROC</span><span class="o">=</span>agent
+<span class="nv">RESTART_FILE</span><span class="o">=</span>agent_restart
+
+<span class="c"># start the navigation service</span>
+/bin/nav
+
+<span class="nb">mkdir</span> <span class="nt">-p</span> /tmp/upload
+dmesg <span class="o">&gt;</span> /tmp/upload/boot_log_<span class="sb">`</span><span class="nb">date</span> <span class="nt">-Iseconds</span><span class="sb">`</span>
+
+<span class="c"># start agent and restart if it exists</span>
+<span class="k">while</span> <span class="o">[</span> 1 <span class="o">]</span><span class="p">;</span> <span class="k">do
+    if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-e</span> <span class="nv">$DIR</span>/<span class="nv">$RESTART_FILE</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+        </span><span class="nb">break
+    </span><span class="k">fi
+    if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="sb">`</span>ps <span class="nt">-o</span> <span class="nb">comm</span> | egrep ^<span class="k">${</span><span class="nv">PROC</span><span class="k">}</span><span class="nv">$`</span><span class="s2">" ]; then
+        </span><span class="nv">$DIR</span><span class="s2">/</span><span class="nv">$PROC</span><span class="s2"> </span><span class="nv">$DIR</span><span class="s2">/config
+    fi
+    sleep 10
+done
+</span></code></pre></div></div>
+
+<p>config</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>logfile <span class="o">=</span> <span class="s2">"/tmp/log.txt"</span>
+
+<span class="c"># levels 0 (trace) - 5 (fatal)</span>
+loglevel <span class="o">=</span> 1
+
+daemonize <span class="o">=</span> <span class="nb">true
+
+</span>id_file <span class="o">=</span> <span class="s2">"/private/id.txt"</span>
+ssh_priv_key <span class="o">=</span> <span class="s2">"/private/id_ed25519"</span>
+priv_key <span class="o">=</span> <span class="s2">"/private/ecc_p256_private.bin"</span>
+
+cmd_host <span class="o">=</span> <span class="s2">"0.0.0.0"</span>
+cmd_port <span class="o">=</span> 9000
+
+collectors_usb <span class="o">=</span> <span class="o">[</span> <span class="s2">"/dev/ttyUSB0"</span>, <span class="s2">"/dev/ttyUSB1"</span> <span class="o">]</span>
+collectors_ipc <span class="o">=</span> <span class="o">[</span> <span class="s2">"/tmp/c1.unix"</span>, <span class="s2">"/tmp/c2.unix"</span> <span class="o">]</span>
+collect_enabled <span class="o">=</span> <span class="nb">true
+</span>dropper_exe <span class="o">=</span> <span class="s2">"/agent/dropper"</span>
+dropper_config <span class="o">=</span> <span class="s2">"/tmp/dropper.yaml"</span>
+dropper_dir <span class="o">=</span> <span class="s2">"/tmp/upload"</span>
+
+navigate_ipc <span class="o">=</span> <span class="s2">"/tmp/nav_service.unix"</span>
+
+key_file <span class="o">=</span> <span class="s2">"/agent/hmac_key"</span>
+restart_flag <span class="o">=</span> <span class="s2">"/agent/agent_restart"</span>
+</code></pre></div></div>
+
+<p>to find IPs in bin<br />
+strings [binName] | grep -E ‘[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}’</p>
+
+<ul>
+  <li>agent: none</li>
+  <li>config: 0.0.0.0</li>
+  <li>diagclient:
+    <ul>
+      <li>A couple false positives</li>
+      <li>127.0.0.1 (localhost)</li>
+    </ul>
+  </li>
+  <li>dropper
+    <ul>
+      <li>Same false positives as before</li>
+      <li>localhost again</li>
+      <li>Calls to this: 169.254.170.2 or 169.254.169.254
+        <ul>
+          <li>http://169.254.170.2/AWS_SECRET_ACCESS_KEYECDSAWithP256AndSHA256ECDSAWithP384AndSHA384ECDSAWithP521AndSHA512error</li>
+          <li>http://169.254.169.254/latest/api/tokenoutput</li>
+          <li>http://169.254.169.254/latest/meta-data/iam/security-credentials/tls</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>ssh hostname? nonroot_user</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      FUN_00435700();
+      if (*(char *)puVar1 == '\\0') {
+        *puVar1 = 0x5f746f6f726e6f6e; -- translates to \_toornon
+        *(undefined8 *)(param_2 + 0x85) = 0x726573755f746f;
+      }
+      FUN_00411f00("SSH_SERVER_ADDRESS",param_2 + 0xc0,1);
+      FUN_00411f00("SSH_SERVER_PORT",param_2 + 0x100,1);
+      FUN_00411f00("PRIVATE_KEY_PATH",*(undefined8 *)(param_1 + 0x28),1);
+      FUN_00411f00("SSH_USERNAME",puVar1,1);
+      FUN_00411f00("EXPECTED_HOST_KEY",param_2 + 0x140,1);
+      FUN_00411f00("BALLOON_ID",param_1,1);
+      FUN_004356a0(CONCAT17(uStack_11,uStack_18),&amp;uStack_18);
+</code></pre></div></div>
+
+<p>0x00480f08: start of usernames and/or passwords?</p>
+
+<p>getting mem: dd if=/proc/177/mem of=/tmp/agent_full skip=$((0x00400000)) bs=1 count=983040</p>
+
+<p>dd if=/proc/253/mem of=/tmp/agent_stack skip=$((0x00770000)) bs=1 count=6266<br />
+88</p>
+
+<p>answer: 100.105.36.5<br />
+0x64692405<br />
+got from running dropper with a fake config. Output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1970/01/01 02:48:26 Connecting to server...
+1970/01/01 02:48:26 ...Connected!
+1970/01/01 02:48:26 Loading/tmp/upload
+1970/01/01 02:50:26 Processing/tmp/upload/boot_log_1970-01-01T00:11:53+00:00boot_log_1970-01-01T00:11:53+00:00
+1970/01/01 02:50:56 Failed to insert into MongoDB:server selection error: server selection timeout, current topology: { Type: Unknown, Servers: [{ Addr: 100.105.36.5:27017, Type: Unknown, Last error: dial tcp 100.105.36.5:27017: connect: network is unreachable }, ] }
+</code></pre></div></div>
+
+<p>binwalk -Me dropper:<br />
+database:<br />
+collection: files<br />
+database: snapshot-44180ec0a37b<br />
+url: mongodb://maintenance:36599080632635@100.105.36.5:27017/?authSource=snapshot-44180ec0a37b<br />
+server:<br />
+directory: /tmp/upload</p>
+
+<h3 id="task-6">TASK 6</h3>
+
+<p>(Not finished, but here was some poking around I got to)<br />
+Connecting:<br />
+Make sure ssh config matches:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host jumpbox external-support.bluehorizonmobile.com <span class="k">*</span>
+    User user
+    HostName external-support.bluehorizonmobile.com
+    IdentityFile /home/jjotto753/Documents/codebreaker_2023/task6/jumpbox.key
+    IdentitiesOnly <span class="nb">yes
+    </span>LocalForward 127.0.0.1:27017 100.105.36.5:27017
+</code></pre></div></div>
+
+<p>run <code class="language-plaintext highlighter-rouge">ssh jumpbox</code> in a different tab<br />
+run commands with this template</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">bson</span>
+
+<span class="n">JUMPBOX_HOST</span> <span class="o">=</span> <span class="s">"external-support.bluehorizonmobile.com"</span>
+<span class="n">MONGO_HOST</span> <span class="o">=</span> <span class="s">"100.105.36.5"</span>
+<span class="n">MONGO_DB</span> <span class="o">=</span> <span class="s">"snapshot-44180ec0a37b"</span>
+<span class="n">MONGO_USERNAME</span> <span class="o">=</span> <span class="s">"maintenance"</span>
+<span class="n">MONGO_PASSWORD</span> <span class="o">=</span> <span class="s">"36599080632635"</span>
+<span class="n">MONGO_COLLECTION</span> <span class="o">=</span> <span class="s">"files"</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="p">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s">"mongodb://"</span><span class="o">+</span><span class="n">MONGO_USERNAME</span><span class="o">+</span><span class="s">":"</span><span class="o">+</span><span class="n">MONGO_PASSWORD</span><span class="o">+</span><span class="s">"@127.0.0.1:27017/?authSource="</span><span class="o">+</span><span class="n">MONGO_DB</span><span class="o">+</span><span class="s">"&amp;authMechanism=SCRAM-SHA-1"</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="n">MONGO_DB</span><span class="p">]</span>
+<span class="n">collection</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="n">MONGO_COLLECTION</span><span class="p">]</span>
+
+<span class="c1"># Commands here
+</span>
+<span class="n">client</span><span class="p">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Database(MongoClient(host=[‘127.0.0.1:27017’], document_class=dict, tz_aware=False, connect=True, authsource=’snapshot-44180ec0a37b’, authmechanism=’SCRAM-SHA-1’), ‘topology_description’)</p>
+
+<p>databases: {‘name’: ‘snapshot-44180ec0a37b’, ‘sizeOnDisk’: 8192, ‘empty’: False}</p>
+
+<p>server info:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6.0.10"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"gitVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8e4b5670df9b9fe814e57cb5f3f8ee9407237b5a"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"modules"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"allocator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tcmalloc"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"javascriptEngine"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mozjs"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"sysInfo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deprecated"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"versionArray"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"openssl"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"running"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenSSL 3.0.2 15 Mar 2022"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"compiled"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenSSL 3.0.2 15 Mar 2022"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"buildEnvironment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"distmod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ubuntu2204"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"distarch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"x86_64"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/opt/mongodbtoolchain/v3/bin/gcc: gcc (GCC) 8.5.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"ccflags"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-Werror -include mongo/platform/basic.h -ffp-contract=off -fasynchronous-unwind-tables -ggdb -Wall -Wsign-compare -Wno-unknown-pragmas -Winvalid-pch -fno-omit-frame-pointer -fno-strict-aliasing -O2 -march=sandybridge -mtune=generic -mprefer-vector-width=128 -Wno-unused-local-typedefs -Wno-unused-function -Wno-deprecated-declarations -Wno-unused-const-variable -Wno-unused-but-set-variable -Wno-missing-braces -fstack-protector-strong -fdebug-types-section -Wa,--nocompress-debug-sections -fno-builtin-memcmp"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cxx"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/opt/mongodbtoolchain/v3/bin/g++: g++ (GCC) 8.5.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cxxflags"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-Woverloaded-virtual -Wno-maybe-uninitialized -fsized-deallocation -std=c++17"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"linkflags"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-Wl,--fatal-warnings -pthread -Wl,-z,now -fuse-ld=gold -fstack-protector-strong -fdebug-types-section -Wl,--no-threads -Wl,--build-id -Wl,--hash-style=gnu -Wl,-z,noexecstack -Wl,--warn-execstack -Wl,-z,relro -Wl,--compress-debug-sections=none -Wl,-z,origin -Wl,--enable-new-dtags"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"target_arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"x86_64"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"target_os"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linux"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"cppdefines"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SAFEINT_USE_INTRINSICS 0 PCRE_STATIC NDEBUG _XOPEN_SOURCE 700 _GNU_SOURCE _FORTIFY_SOURCE 2 BOOST_THREAD_VERSION 5 BOOST_THREAD_USES_DATETIME BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS BOOST_ENABLE_ASSERT_DEBUG_HANDLER BOOST_LOG_NO_SHORTHAND_NAMES BOOST_LOG_USE_NATIVE_SYSLOG BOOST_LOG_WITHOUT_THREAD_ATTR ABSL_FORCE_ALIGNED_ACCESS"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"bits"</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"debug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"False"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"maxBsonObjectSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">16777216</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"storageEngines"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"devnull"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ephemeralForTest"</span><span class="p">,</span><span class="w"> </span><span class="s2">"wiredTiger"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"ok"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"users"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"snapshot-44180ec0a37b.maintenance"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"userId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"44fcc222-0676-472d-901f-45ef9f881192"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"maintenance"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"db"</span><span class="p">:</span><span class="w"> </span><span class="s2">"snapshot-44180ec0a37b"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"roles"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"readWrite"</span><span class="p">,</span><span class="w"> </span><span class="nl">"db"</span><span class="p">:</span><span class="w"> </span><span class="s2">"snapshot-44180ec0a37b"</span><span class="w"> </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w"> </span><span class="nl">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"userAdmin"</span><span class="p">,</span><span class="w"> </span><span class="nl">"db"</span><span class="p">:</span><span class="w"> </span><span class="s2">"snapshot-44180ec0a37b"</span><span class="w"> </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"mechanisms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"SCRAM-SHA-1"</span><span class="p">,</span><span class="w"> </span><span class="s2">"SCRAM-SHA-256"</span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"ok"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 
       </section>
     </div>
