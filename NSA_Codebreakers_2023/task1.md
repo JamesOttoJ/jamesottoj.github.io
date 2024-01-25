@@ -10,7 +10,7 @@ USCG.log (A file holding metadata for the signal)
 database.db (a sql database with a list of signals from the NSAs collection)
 
 ### Where to Start
-The easiest place to look is the log. Running `file USCG.log` shows that the file is a simple JSON file. Once we run `cat USCG.log` or just open it up in a file editor we see this:
+The easiest place to look is the [log](./static/USCG.log). Running `file USCG.log` shows that the file is a simple JSON file. Once we run `cat USCG.log` or just open it up in a file editor we see this:
 ```json
 {
     "coordinates": [
@@ -25,7 +25,7 @@ The easiest place to look is the log. Running `file USCG.log` shows that the fil
 From this file, we can see a couple ways to filter the database. Between trying to filter by dates or floats, I will go for floats any day. The next step is to find data in the database to filter
 
 ### Analyzing the Database
-I'm working on linux, so I downloaded the [sqlite package](https://sqlite.org/2023/sqlite-tools-linux-x64-3440200.zip) to get the binary. After running the binary, a sqlite shell will pop up. From here there are two type of commands that can be run: sql querries and dot commands. SQL queries work like normal, but dot commands are sqlite-specific commands to interface with data sources. To get the database info into the sqlite instace, run `.open database.db` if you're in the folder where you downloaded database.db. The next step from here is to figure out what the datbase looks like. To do this, there are two main commands to look at. `.tables` will print out all of the tables holding data. From here the collumn names can be found by running `.schema [tableName]`
+I'm working on linux, so I downloaded the [sqlite package](https://sqlite.org/2023/sqlite-tools-linux-x64-3440200.zip) to get the binary. After running the binary, a sqlite shell will pop up. From here there are two type of commands that can be run: sql querries and dot commands. SQL queries work like normal, but dot commands are sqlite-specific commands to interface with data sources. To get the [database](./static/database.db) info into the sqlite instace, run `.open database.db` if you're in the folder where you downloaded database.db. The next step from here is to figure out what the datbase looks like. To do this, there are two main commands to look at. `.tables` will print out all of the tables holding data. From here the collumn names can be found by running `.schema [tableName]`
 
 From this enumeration, we get four tables (audio_object, event, location, timestamp), but the most relavent ones are location and timestamp. We could search by either the location or date, but I personally think that location is easier. To scan through location, I used this SQL query: `SELECT * FROM location WHERE ABS(latitude-28.52) < 0.03;`
 
