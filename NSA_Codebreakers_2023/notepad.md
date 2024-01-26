@@ -1,11 +1,14 @@
-# Collection of Raw Notes
+---
+layout: default
+title: Notepad
+parent: NSA Codebreakers 2023
+nav_order: 1
+---
 
-- [Task 1](#task-1)
-- [Task 2](#task-2)
-- [Task 3](#task-3)
-- [Task 4](#task-4)
-- [Task 5](#task-5)
-- [Task 6](#task-6)
+# Collection of Raw Notes
+{: .no_toc}
+- TOC
+{:toc}
 
 ### TASK 1
 

@@ -1,4 +1,10 @@
-# James Joseph's cyber site
+---
+layout: default
+title: Home
+nav_order: 1
+---
+
+# Home
 
 My challenges:
 - [sp00ky CTF 2023 reversing](https://github.com/JamesOttoJ/sp00ky_2023_rev)

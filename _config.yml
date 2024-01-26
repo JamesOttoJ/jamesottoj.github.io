@@ -8,8 +8,11 @@ url: "https://jamesottoj.github.io" # the base hostname & protocol for your site
 github_username:  jamesottoj
 
 # Build settings
-remote_theme: pages-themes/hacker@v0.2.0
+theme: just-the-docs
 plugins:
 - jekyll-remote-theme
 kramdown:
   hard_wrap: true
+
+# Theme config options
+color_scheme: dark

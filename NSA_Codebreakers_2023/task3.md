@@ -1,4 +1,14 @@
+---
+layout: default
+title: Task 3
+parent: NSA Codebreakers 2023
+nav_order: 4
+---
+
 # TASK 3
+{: .no_toc}
+- TOC
+{:toc}
 
 ### Task Description
 >Leveraging that datasheet enabled you to provide the correct pins and values to properly communicate with the device over UART. Because of this we were able to communicate with the device console and initiate a filesystem dump.

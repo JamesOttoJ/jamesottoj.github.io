@@ -1,3 +1,10 @@
+---
+layout: default
+title: Notepad
+parent: Hack the Box University CTF 2023
+nav_order: 1
+---
+
 # Hack The Box University CTF notepad
 Windows challenge:
 program takes two characters right next to each other from and input string and adds their hex values

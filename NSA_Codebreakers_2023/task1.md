@@ -1,6 +1,14 @@
+---
+layout: default
+title: Task 1
+parent: NSA Codebreakers 2023
+nav_order: 2
+---
+
 # TASK 1
-- [Where to start](#where-to-start)
-- [Analyzing the Database](#analyzing-the-database)
+{: .no_toc}
+- TOC
+{:toc}
 
 ### Task Description
 > The US Coast Guard (USCG) recorded an unregistered signal over 30 nautical miles away from the continental US (OCONUS). NSA is contacted to see if we have a record of a similar signal in our databases. The Coast guard provides a copy of the signal data. Your job is to provide the USCG any colluding records from NSA databases that could hint at the object’s location. Per instructions from the USCG, to raise the likelihood of discovering the source of the signal, they need multiple corresponding entries from the NSA database whose geographic coordinates are within 1/100th of a degree. Additionally, record timestamps should be no greater than 10 minutes apart.

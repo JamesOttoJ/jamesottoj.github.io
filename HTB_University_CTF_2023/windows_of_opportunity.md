@@ -1,3 +1,10 @@
+---
+layout: default
+title: Windows of Opportunity
+parent: Hack the Box University CTF 2023
+nav_order: 2
+---
+
 # Windows of Opportunity (rev)
 ### Starting out
 As with any reversing problem, I start by running `strings` on it. Strings allows me to see any, well, strings that are in the program.  

@@ -1,3 +1,8 @@
+---
+layout: minimal
+title: 404
+nav_exclude: true
+---
 
 # Build container
 
