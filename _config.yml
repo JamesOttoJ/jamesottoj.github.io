@@ -10,7 +10,7 @@ github_username:  jamesottoj
 # Build settings
 theme: just-the-docs
 plugins:
-- jekyll-remote-theme
+- jekyll-default-layout
 kramdown:
   hard_wrap: true
 
