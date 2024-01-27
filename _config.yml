@@ -8,7 +8,7 @@ url: "https://jamesottoj.github.io" # the base hostname & protocol for your site
 github_username:  jamesottoj
 
 # Build settings
-theme: just-the-docs
+remote-theme: just-the-docs/just-the-docs
 plugins:
 - jekyll-default-layout
 kramdown:
