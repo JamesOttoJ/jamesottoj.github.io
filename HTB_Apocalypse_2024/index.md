@@ -22,7 +22,3 @@ In this CTF, I had to employ a variety of skills from reading assembly to extrac
 ### Tools
 
 Some of the most important tools that I used were Ghidra, strings, python (pwn lib), powershell, and wireshark. These helped me analyze the various programs, files, and indicators to solve the challenges at hand. To learn more about how these tools got put to use, please reference the below writups.
-
-### Writups
-
-- [Follow The Path (rev)](./follow_the_path.md)

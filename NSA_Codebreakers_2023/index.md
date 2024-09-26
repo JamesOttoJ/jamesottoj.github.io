@@ -20,11 +20,3 @@ These challenges taught me a lot about how embeded systems worked as well as how
 ### Tools
 
 These challenges used a wide variety of tools. From tools for embeded systems like uboot and qemu to linux tools like sed, awk, and nc, each challenge had a new and unique toolset to learn. To learn more about the individual tools used, please look at the writeups for each task below
-
-### Writups
-
-- [Task 1](./task1.md)
-- [Task 2](./task2.md)
-- [Task 3](./task3.md)
-- [Task 4](./task4.md)
-- [Task 5](./task5.md)

@@ -20,8 +20,3 @@ The two challenges I solved for this competition both dealt with reverse enginee
 ### Tools
 
 To solve these challenges, I mostly used Ghidra for examining the code and flow of information. On top of Ghidra, I also used a variety of helpers like dd, strings, and python to analyze and extract data.
-
-### Writups
-
-- [Windows of Oportunity](./windows_of_opportunity.md)
-- [Bio Bundle](./bio_bundle.md)
