@@ -1,6 +1,6 @@
 ---
 layout: default
-title: An Unusual Sighting
+title: It Has Begun
 parent: HTB Apocalypse 2024
 nav_order: 2
 ---

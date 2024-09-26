@@ -21,6 +21,8 @@ contact+site@jojoseph.dev
     - [Bio bundle(rev)](./HTB_University_CTF_2023/bio_bundle)
 - [HTB Apocalypse 2024](./HTB_Apocalypse_2024/directory)
     - [Follow the path](./HTB_Apocalypse_2024/follow_the_path)
+    - [An Unusual Sighting](./HTB_Apocalypse_2024/an_unusual_sighting)
+    - [It Has Begun](./HTB_Apocalypse_2024/it_has_begun)
 - [NSA Codebreakers 2023](./NSA_Codebreakers_2023/directory)
     - [Notepad](./NSA_Codebreakers_2023/notepad)
     - [Task 1](./NSA_Codebreakers_2023/task1)
