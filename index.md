@@ -11,7 +11,7 @@ I am the president of the Hacking and Cybersecurity Club (HACC) at Iowa State Un
 [James Joseph](https://www.linkedin.com/in/james-j-410b14196/)
 contact+site@jojoseph.dev
 
-## [Resume]()
+## [Resume](./James_Joseph_Resume.pdf)
 
 ## School
 - [Senior Design (CPR E 4910/4920)](./senior_design)
