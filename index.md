@@ -14,23 +14,25 @@ contact+site@jojoseph.dev
 ## [Resume]()
 
 ## School
-- [Senior Design (CPR E 4910/4920)](./senior_design/directory)
-- [General Education Reflection](./gened.md)
-- [Cumulative Reflection](./cumulative.md)
+- [Senior Design (CPR E 4910/4920)](./senior_design)
+- [General Education Reflection](./gened)
+- [Cumulative Reflection](./cumulative)
+- [Work History](./work)
+- [HACC Talks](./talks)
 
 ## My challenges:
 - [sp00ky CTF 2023 reversing](https://github.com/JamesOttoJ/sp00ky_2023_rev)
 
 ## Writeups:
-- [HTB University CTF 2023](./HTB_University_CTF_2023/directory)
+- [HTB University CTF 2023](./HTB_University_CTF_2023)
     - [Notepad](./HTB_University_CTF_2023/notepad)
     - [Windows of oportunity(rev)](./HTB_University_CTF_2023/windows_of_opportunity)
     - [Bio bundle(rev)](./HTB_University_CTF_2023/bio_bundle)
-- [HTB Apocalypse 2024](./HTB_Apocalypse_2024/directory)
+- [HTB Apocalypse 2024](./HTB_Apocalypse_2024)
     - [Follow the path](./HTB_Apocalypse_2024/follow_the_path)
     - [An Unusual Sighting](./HTB_Apocalypse_2024/an_unusual_sighting)
     - [It Has Begun](./HTB_Apocalypse_2024/it_has_begun)
-- [NSA Codebreakers 2023](./NSA_Codebreakers_2023/directory)
+- [NSA Codebreakers 2023](./NSA_Codebreakers_2023)
     - [Notepad](./NSA_Codebreakers_2023/notepad)
     - [Task 1](./NSA_Codebreakers_2023/task1)
     - [Task 2](./NSA_Codebreakers_2023/task2)

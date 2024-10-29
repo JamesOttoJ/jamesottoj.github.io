@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Hack the Box University CTF 2023
-nav_order: 6
+nav_order: 7
 has_children: true
 ---
 

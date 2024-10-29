@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Cumulative Reflection
-nav_order: 2
+nav_order: 4
 ---
 
 During my time at Iowa State, I engaged in a variety of cybersecurity-related experiences. My coursework gave me a quality foundation in computer engineering and software development concepts. This was necessary for the later cyber-specific coursework that added onto the concepts with how an attacker mindset can be used to abuse the assumptions and oversights of developers. In addition to this, Iowa State also gave a multitude of resources to practice and refine my particular interests within the cybersecuity field. For me, this lead to a few key interests. I had the chance to delve into securing and monitoring Windows systems during the CDC. I also developed a particular interest for reverse engineering when the Hacking and Cybersecurity Club (HACC) would participate in CTFs. Lastly, I got exposed to external platforms like Hack The Box and had the chance to work with fellow students to broaden my skill sets.
