@@ -26,87 +26,16 @@ nav_order: 2
 - DoD procurement records (shipping.db)
 
 ### Identify the File
-When identifying a file I need to analyze, there are a few ways I go about it. To start, I run the `file` Linux command on it. In this case, I received the output: `shipping.db: Zip data (MIME type "application/vnd.oasis.O"?)`. With that, I decided to unzip the file and found a file called "content.txt". The file had multiple lines of Items:
+When identifying a file I need to analyze, there are a few ways I go about it. To start, I run the `file` Linux command on it. In this case, I received the output: `shipping.db: Zip data (MIME type "application/vnd.oasis.O"?)`. With that, I decided to unzip the file and found a file called "meta.xml" that appeared to have the following metadata:
 ```
-Titan Aerospace Systems
-3665 Judith Harbors Suite 503, Port Elizabethland, HI 44181
-Vincent Miller
-###-###-5828
-vincentm@titanaerospace.systems
-Samantha Griffin
-###-###-0140
-samanthag@titanaerospace.systems
-TIT0547245
-2023-09-01
-Williams Jackson International
-497 Smith Land Suite 369, East Meredith, PA 99581
-Isabella Mckenzie
-###-###-2407
-mckenzie.isabella@williamsjackson.org
-Amy Morse
-###-###-9352
-morse.amy@williamsjackson.org
-WIL0669259
-2023-09-01
-...
+<?xml version="1.0" encoding="UTF-8"?>
+<office:document-meta xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3"><office:meta><meta:document-statistic meta:table-count="1" meta:cell-count="11520" meta:object-count="0"/><meta:generator>LibreOffice/7.4.7.2$Linux_X86_64 LibreOffice_project/40$Build-2</meta:generator></office:meta></office:document-meta>
 ```
 
-Looking at the lines, I noticed a pattern that followed something like: company name, address, name 1, phone number 1, email 1, name 2, phone number 2, email 2, ID, date. Once I realized this, I wrote a quick python script to parse out the data into a CSV:
-
-```python
-#!/usr/bin/python3
-
-with open("content.txt") as content_file:
-    with open("out.csv", "w") as out_file:
-        out_file.write("company,address,person 1 name,person 1 number,person 1 email,person 2 name,person 2 number,person 2 email,id,date\n")
-        while True:
-            company = content_file.readline()
-            if not company:
-                break
-            company = company.rstrip()
-            address = content_file.readline()
-            if not address:
-                break
-            address = address.rstrip()
-            person_1_name = content_file.readline()
-            if not person_1_name:
-                break
-            person_1_name = person_1_name.rstrip()
-            person_1_number = content_file.readline()
-            if not person_1_number:
-                break
-            person_1_number = person_1_number.rstrip()
-            person_1_email = content_file.readline()
-            if not person_1_email:
-                break
-            person_1_email = person_1_email.rstrip()
-            person_2_name = content_file.readline()
-            if not person_2_name:
-                break
-            person_2_name = person_2_name.rstrip()
-            person_2_number = content_file.readline()
-            if not person_2_number:
-                break
-            person_2_number = person_2_number.rstrip()
-            person_2_email = content_file.readline()
-            if not person_2_email:
-                break
-            person_2_email = person_2_email.rstrip()
-            trans_id = content_file.readline()
-            if not trans_id:
-                break
-            trans_id = trans_id.rstrip()
-            date = content_file.readline()
-            if not date:
-                break
-            date = date.rstrip()
-            out_file.write("\"" + company + "\",\"" + address + "\",\"" + person_1_name + "\",\"" + person_1_number + "\",\"" + person_1_email + "\",\"" + person_2_name + "\",\"" + person_2_number + "\",\"" + person_2_email + "\",\"" + trans_id + "\",\"" + date + "\"\n")
-```
-
-Aside from using the file command, it can also be useful to look up, ".(file extension) file type". Doing this on the given file will show that it can also be an open document format file that can be opened by LibreOffice Math on Linux. Doing this shows a table with all the records from output.txt, and it works as an alternative way to get the data.
+With that, I realized that I could open up the original file with Libre Office. Once the file was open, I saw a large table with data in it. To make it easier to work with, I took the table data from the document and put it into Libre Calc. Looking at the lines, I noticed a pattern that followed something like: company name, address, name 1, phone number 1, email 1, name 2, phone number 2, email 2, ID, date.
 
 ### Parse the Records
-After looking at out.csv, I realized that I would need a better way to organize the records. To organize the records, I opened up the file in LibreOffice Calc and created a pivot table:
+After looking at the new spreadsheet, I realized that I would need a better way to organize the records. To organize the records, I created a pivot table:
 1. Insert > Pivot Table...
 2. Drag each available field on the right to "Row Fields" on the bottom left
 3. Click "OK"
