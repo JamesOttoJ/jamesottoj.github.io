@@ -46,7 +46,7 @@ When initially accessing the website it asks for a certificate to use. This is w
 ```
 
 I tried a couple of sample queries before taking to heart that it's a *caching* proxy for GuardianGPT and turning to audit.log. To get an idea of what that looks like. Here are the first 10 lines:
-```
+```sh
 ttyaudit=1715601608 w=3 d=echo "export PATH=$PATH::~/bin" >> \033[D\033[D\033[D\033[D\033[D\033[D\033[D\033[D\033[D\033[D\033[D\033[3~\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C\033[C~/.profile\x0d u=1000 s=182 id=646644 c=0xf010
 ttyaudit=1715601617 w=3 d=-m "What's the b\x01gagpt \x05est way to debug an intermittent issue with I2C communication between a microcontroller and a sensor using a logic analyzer"\x0d u=1000 s=158 id=646645 c=0x3de6
 ttyaudit=1715601664 w=3 d=source ~/.profile\x0d u=1000 s=21 id=646646 c=0x6ce1

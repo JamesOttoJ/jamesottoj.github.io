@@ -27,7 +27,7 @@ nav_order: 2
 
 ### Identify the File
 When identifying a file I need to analyze, there are a few ways I go about it. To start, I run the `file` Linux command on it. In this case, I received the output: `shipping.db: Zip data (MIME type "application/vnd.oasis.O"?)`. With that, I decided to unzip the file and found a file called "meta.xml" that appeared to have the following metadata:
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <office:document-meta xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3"><office:meta><meta:document-statistic meta:table-count="1" meta:cell-count="11520" meta:object-count="0"/><meta:generator>LibreOffice/7.4.7.2$Linux_X86_64 LibreOffice_project/40$Build-2</meta:generator></office:meta></office:document-meta>
 ```
@@ -42,7 +42,7 @@ After looking at the new spreadsheet, I realized that I would need a better way 
 
 ### The Outlier
 Looking through the entries, there were large chunks where only the id and date were changing, so I figured I would need to find the record where that wasn't the case. Combing through, I found the record:
-```
+```txt
 Guardian Armaments
 00144 Joshua Haven Suite 551, Ruthstad, OK 02618
 Christine Peters MD

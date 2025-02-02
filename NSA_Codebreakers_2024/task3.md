@@ -96,7 +96,7 @@ Moving onto `main.NewSeedgenAuthClient`, it calls 3 notable functions: `math/ran
 Lastly of this bunch, the `otp/seedgen.RegisterSeedGenerationServiceServer()` function. This essentially registers all the gRPC API endpoints for the seedGenerationServer class (Ping, StressTest, and GetSeed).
 
 Focusing on the `GetSeed` function of those, it makes a call to `main.(*SeedgenAuthClient).auth` and uses the output to log and return some data. Diving into the auth function, it appeared that it would just take the data it was given and pass it to the auth server, but I noticed that it was doing extra processing and comparing the data to a random-looking hex value. The decompiled content itself wasn't much help, so I decided to look at the assembly.
-```
+```assembly
                              LAB_007cf602                                    XREF[2]:     007cf5d6(j), 007cf5e3(j)  
         007cf602 4c 8b a4        MOV        R12,qword ptr [RSP + username_spill.str]
                  24 b0 00 
@@ -178,8 +178,9 @@ Because of Go's runtime, static analysis can only go so far. There will be instr
 
 #### Interacting with the program
 When first running a program, it's always worth trying it with the `-h` or `--help` arg. Running `server --help` gave this messsage:
-```
-./server --help
+```bash
+┌─[jamesj@parrot]─[~/Documents/codebreaker_2024/task3]
+└──╼ $./server --help
 Starting the Guardian Armaments OTP seed generation service!  Please ensure that this software can reach the authentication service to register any generated seeds!  Otherwise your token will not authenticate you to the network after you program it with this seedUsage of ./server:
   -auth-ip string
     	Set the IP address of the auth server (default "127.0.0.1")
@@ -190,19 +191,20 @@ Starting the Guardian Armaments OTP seed generation service!  Please ensure that
 Looking at these arguments, I figured keeping the IP to localhost would be best because that means I can act as the auth server. For the log level, I always like to set it to debug when possible. This will often leak extra information during startup, and it will help with finding the errors in your payload.
 
 Just running the program with debug logs gives:
-```
-./server -loglevel debug
+```bash
+┌─[jamesj@parrot]─[~/Documents/codebreaker_2024/task3]
+└──╼ $./server -loglevel debug
 Starting the Guardian Armaments OTP seed generation service!  Please ensure that this software can reach the authentication service to register any generated seeds!  Otherwise your token will not authenticate you to the network after you program it with this seed{"time":"2025-01-25T08:46:09.235210649-06:00","level":"INFO","msg":"Connected to auth server"}
 {"time":"2025-01-25T08:46:09.235712108-06:00","level":"ERROR","msg":"Failed to ping the auth service","ping_response":null,"err":"rpc error: code = Unavailable desc = connection error: desc = \"transport: Error while dialing: dial tcp 127.0.0.1:50052: connect: connection refused\""}
 ```
 
 Looks like it's trying to ping a service on port 50052. In case it was just checking if there was anything up at all, I opened a netcat listener with `nc -lnvp 50052`. This changed the message to:
-```
+```bash
 Starting the Guardian Armaments OTP seed generation service!  Please ensure that this software can reach the authentication service to register any generated seeds!  Otherwise your token will not authenticate you to the network after you program it with this seed{"time":"2025-01-25T08:48:35.334606264-06:00","level":"INFO","msg":"Connected to auth server"}
 {"time":"2025-01-25T08:48:55.35009975-06:00","level":"ERROR","msg":"Failed to ping the auth service","ping_response":null,"err":"rpc error: code = Unavailable desc = connection error: desc = \"error reading server preface: read tcp 127.0.0.1:57528->127.0.0.1:50052: use of closed network connection\""}
 ```
 The netcat listener received the following from the application:
-```
+```bash
 listening on [any] 50052 ...
 connect to [127.0.0.1] from (UNKNOWN) [127.0.0.1] 57528
 PRI * HTTP/2.0
@@ -215,7 +217,7 @@ This told me that I needed some kind of http 2.0 server listening on that port. 
 
 After extraction, there were two notable protobufs: auth.proto and seed_generation.proto.
 **auth.proto**:
-```
+```go
 syntax = "proto3";
 
 package auth_service;
@@ -285,7 +287,7 @@ message PingResponse {
 ```
 
 **seed_generation.proto**
-```
+```go
 syntax = "proto3";
 
 package seed_generation;
@@ -380,7 +382,7 @@ func main() {
 ```
 
 After putting this in place and running the server, the error from the original program output turned into:
-```
+```bash
 ...
 {"time":"2025-01-25T16:41:08.7000501-06:00","level":"DEBUG","msg":"Auth Service Pong ","pong":8765}
 {"time":"2025-01-25T16:41:08.700068748-06:00","level":"INFO","msg":"Seedgen Server running on port 50051"}
@@ -430,14 +432,14 @@ func main() {
 
 This gave the result: `2025/01/25 16:52:28 Seed: 2188fa513e4f1a02 | Count: 1`
 The server reported: 
-```
+```bash
 {"time":"2025-01-25T16:52:28.513744712-06:00","level":"DEBUG","msg":"got a GetSeed","username":"test","password":""}
 {"time":"2025-01-25T16:52:28.513769785-06:00","level":"INFO","msg":"Authenticating","username":"test","password":""}
 {"time":"2025-01-25T16:52:28.513775931-06:00","level":"DEBUG","msg":"test user authenticated, but has no privileges in network so no need to authenticate with Auth Service!"}
 {"time":"2025-01-25T16:52:28.513782426-06:00","level":"INFO","msg":"Registered OTP seed with authentication service","username":"test","seed":2416456426928937474,"count":1}
 ```
 Trying it again, however, gave:
-```
+```bash
 {"time":"2025-01-25T16:55:59.872874488-06:00","level":"INFO","msg":"Authenticating","username":"test","password":""}
 {"time":"2025-01-25T16:55:59.872880564-06:00","level":"DEBUG","msg":"Authenticating with auth service"}
 {"time":"2025-01-25T16:55:59.874033363-06:00","level":"ERROR","msg":"Failed to authenticate client with service"}
