@@ -10,7 +10,7 @@ nav_order: 6
 - TOC
 {:toc}
 
-### Task Description
+## Task Description
 >  Great job finding out what the APT did with the LLM! GA was able to check their network logs and figure out which developer copy and pasted the malicious code; that developer works on a core library used in firmware for the U.S. Joint Cyber Tactical Vehicle (JCTV)! This is worse than we thought!
 > 
 > You ask GA if they can share the firmware, but they must work with their legal teams to release copies of it (even to the NSA). While you wait, you look back at the data recovered from the raid. You discover an additional drive that you haven’t yet examined, so you decide to go back and look to see if you can find anything interesting on it. Sure enough, you find an encrypted file system on it, maybe it contains something that will help!
@@ -22,12 +22,12 @@ nav_order: 6
 > Prompt:
 > - Enter the password (hope it works!)
 
-### Files Given
+## Files Given
 - disk image of the USB drive which contains the encrypted filesystem (disk.dd.tar.gz)
 - Interesting files from the user's directory (files.zip)
 - Interesting files from the bin/ directory (bins.zip)
 
-### Looking Through the Files
+## Looking Through the Files
 There are a lot more files this time around. Starting with the USB image, `file` shows: `disk.dd: DOS/MBR boot sector, code offset 0x58+2, OEM-ID "mkfs.fat", sectors/cluster 64, reserved sectors 64, Media descriptor 0xf8, sectors/track 63, heads 255, sectors 268435440 (volumes > 32 MB), FAT (32 bit), sectors/FAT 32768, serial number 0x6d316b65, label: "USB-128    "`. This tells us that it uses the fat32 file system, so we can mount it to our own system with:
 ```bash
 sudo mkdir /mnt/USB-128
@@ -341,7 +341,7 @@ Sadly, the passwords seem to have been encrypted and encoded with base64. This d
 
 The last folder is the `bins` folder. This folder just has two programs in it: `pm` and `pidgin_rsa_encryption`
 
-### Reverse Engineering
+## Reverse Engineering
 Starting with `file` on the two programs:
 ```bash
 ┌─[jamesj@parrot]─[~/Documents/codebreaker_2024/task5]
@@ -358,10 +358,10 @@ Once I opened them up in Ghidra, I realized that I would need to do some searchi
 
 I found that I would need to extract the `pydata` section to get python bytecode. After that, it could be broken up with a tool called [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) to get the pyc files. Those pyc files can then disassembled and decompiled. I tried the recommended tools from pyinstxtractor, but uncompyle wasn't working for me, so I used [Decompile++](https://github.com/zrax/pycdc) instead. I will warn that this still didn't fully work (it didn't support some of the instructions for decompilation), but it gave enough in the code output that I could understand what was going on and fill in the gaps with the assembly file. I will also warn against using pylingual.io because it gave the wrong output even if it "supported" everything. This is in part because it would guess sometimes.
 
-### Cryptographic Analysis
+## Cryptographic Analysis
 Now that we can see what everything is and what it does, it's time to identify the vulnerabilities. As the scenario states, "while the cryptography is usually solid, the implementation can often have flaws." This told me that I would need to look closely at how each of the programs worked as well as what flaws there can be in the protocols they use
 
-#### pm
+### pm
 Starting with `pm`, this is the python output I got:
 ```py
 # Source Generated with Decompyle++
@@ -521,7 +521,7 @@ Looking at this code, these are the main cryptographic flaws I could identify (f
 | 5. CFB is used for AES cipher block mode | This has a lot of complex problems, so it will be analyzed after this table |
 | 6. MD5 used to store the master password | MD5 is very brute-forceable (my laptop can check over 4 million per second). It is more likely to produce a hash colisions (two inputs that produce the same hash output) |
 
-#### AES-CFB
+### AES-CFB
 *How it works*: Starting with the first block, the key is used at the key, and the IV is used at the input for AES. This produces one block of bytes that gets xored with the first block of plaintext to create the first block of ciphertext. That is then used as the next input for AES to produce another block of bytes. Those bytes are xored with the next block of plaintext to produce the second block of ciphertext. This process is repeated until there is no plaintext left.
 ![AES Block Mode Chart](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#/media/File:BlockCipherModesofOperation.svg "AES Block Mode Chart")
 
@@ -531,7 +531,7 @@ Of note, the number 18 should spark recognition. It's the default length for the
 
 *Reused IV*: With this implementation, it is very important to have a different IV, key, or both. If the same IV and key are used, we run into the One-Time Pad (OTP) reuse issue. This stems from the idea that `A ^ B == C && A ^ C == B && B ^ C == A && C ^ B == A`, so we can get `Plaintext1 ^ Plaintext2` if we have two ciphertexts encrypted with the same pad.
 
-#### pidgin_rsa_encryption
+### pidgin_rsa_encryption
 Moving to `pidgin_rsa_encryption`, Decompyle++ had an especially hard time with this one, so I had to reference the assembly to double check my assumptions. Luckily, all of the important information was still in the decompiled code:
 ```py
 # Source Generated with Decompyle++
@@ -584,10 +584,10 @@ Modes:
 
 With this information, I can assume that this program made the encrypted messages from the chat logs. The main thing to note here is that a static pad is used. It's tricky to spot (and I wasn't too confident in the decompiler), but `random.seed(a='None')` is **very** different from `random.seed(a=None)`. The first one is a string while the second one is a keyword. The string sets the seed to the bytes for 'None' while the keyword, None, makes python pick a source of randomnes like `/dev/urandom` or the epoch time in miliseconds. This means that (just like in task 3) the same data will be generated when a random value is needed instead of unique data each run. In this case, that means the padding will be the same for every message.
 
-#### Trying the Obvious
+### Trying the Obvious
 To start, I tried the quick and easy things just in case. I used hashcat with rockyou against both the MD5 of the master password and the hash for the private key with no results. I also looked into brute forcing gocryptfs with rockyou, but it took multiple seconds for each attempt (as intended), so it wasn't feasable. I then reimplented the padding scheme to run through rockyou using 570RM's public key and checking it against the message from B055M4N. While doing that, I noted that all of the RSA keys used an e of 3 which can lead to a variety of low exponent attacks because RSA is just `math.pow(plaintext, e) % n`.
 
-### Exploiting Vulnerabilities
+## Exploiting Vulnerabilities
 With all that in mind I started to put the following together:
 1. RSA low exponent attack
 2. AES-CFB OTP reuse

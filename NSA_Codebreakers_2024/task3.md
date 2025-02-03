@@ -10,7 +10,7 @@ nav_order: 4
 - TOC
 {:toc}
 
-### Task Description
+## Task Description
 >  Great work finding those files! Barry shares the files you extracted with the blue team who share it back to Aaliyah and her team. As a first step, she ran strings across all the files found and noticed a reference to a known DIB, “Guardian Armaments” She begins connecting some dots and wonders if there is a connection between the software and the hardware tokens. But what is it used for and is there a viable threat to Guardian Armaments (GA)?
 > 
 > She knows the Malware Reverse Engineers are experts at taking software apart and figuring out what it's doing. Aaliyah reaches out to them and keeps you in the loop. Looking at the email, you realize your friend Ceylan is touring on that team! She is on her first tour of the Computer Network Operations Development Program
@@ -22,11 +22,11 @@ nav_order: 4
 > Prompt:
 > - Enter a valid JSON that contains the (3 interesting) keys and specific values that would have been logged if you had successfully leveraged the running software. Do ALL your work in lower case.
 
-### Files Given
+## Files Given
 - Executable from ZFS filesystem (server)
 - Retrieved from the facility, could be important? (shredded.jpg)
 
-### Static Analysis
+## Static Analysis
 Starting with `file` on the executable, it shows: `server: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, Go BuildID=FYmEDItHIsRHHIq98wlB/a0VGthTc36DMaPB42oqd/Z80VF_UGQE1u9089Ef4n/roe9PgJFthb0PSZ3SK_n, with debug_info, not stripped`. Of note from this, it's an x86-64 executable written in Go with symbols left in. This means it is time to open the program in Ghidra. 
 
 Looking at the available main functions/classes, there are a few notable ones to me:
@@ -176,7 +176,7 @@ else:
 
 Because of Go's runtime, static analysis can only go so far. There will be instructions like `NOP dword ptr [RAX + RAX*0x1]`, and it will often be hard to track where the data is going. To make it easier to analyze at this point, I found places where I wanted to know what the state of the program was and set a breakpoint in GDB.
 
-#### Interacting with the program
+### Interacting with the program
 When first running a program, it's always worth trying it with the `-h` or `--help` arg. Running `server --help` gave this messsage:
 ```bash
 ┌─[jamesj@parrot]─[~/Documents/codebreaker_2024/task3]
@@ -507,7 +507,7 @@ func main() {
 
 Now that I had it working, I wondered why that first request worked, so I started dynamic analysis
 
-### Dynamic Analysis
+## Dynamic Analysis
 Looking back at the code, I found the "test user authenticated, but has no privileges in network so no need to authenticate with Auth Service!" string being used in the auth function, and I traced it back to the assembly snippet that was analyzed earlier. I set a breakpoint at the beginning and waited for it to be hit after the GetSeed request. Once the breakpoint was hit, I followed the code and saw that the mysterious variable was some random sequence of 4 bytes that got XORed with "test" to get the 0x8b16bd5d value it looks for.
 
 After seeing why "test" passed, I tried it again to see why it didn't pass. I noticed that the mysterious variable was both different and recognizable. It was the least significant four bytes of the first seed: 0x3e4f1a02. Thinking back to the code again, I remembered that the random was seeded, so I made a quick, test Go program to see if the random values lined up:
@@ -533,12 +533,12 @@ Which resulted in:
 2025/01/25 17:15:15 5e2653083382a521
 ```
 
-### Finding the vulnerability
+## Finding the vulnerability
 The seed means that using the username "test" in the first request will work every time. It also means that there is a series of bytes in each request that will make the server skip authentication. To determine what this means, it's time to look at the other file. shredded.jpg contains a shredded piece of paper with "jasper_0" on it. Looking back to task 1, the record out of place had a user with the name "Jasper Wright" and an email of "jasper_05038@guard.ar". Emails are made up of a username and domain in the format "username@domain", so I figured that it was worth "jasper_05038" as the username in multiple GetSeed requests until it bypassed the authentication.
 
 As my cryptography professor always said, 4 bytes is easy to brute force. Because random numbers naturally spread out evenly over time, a random choice is just as brute force-able as going through the options methodically. This will also produce three important values: a username, seed, and count like the prompt wants.
 
-### Exploiting
+## Exploiting
 When I first tried exploiting it, I send a request for the sever for each attempt. This was only giving me around 10,000 requests every minute and no results after 12 hours, so I switched to emulating the process. Once I did this in go using the following program, it only took around 5 minutes:
 ```go
 package main

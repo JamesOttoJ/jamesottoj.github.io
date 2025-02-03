@@ -10,7 +10,7 @@ nav_order: 2
 - TOC
 {:toc}
 
-### Task Description
+## Task Description
 > Aaliyah is showing you how Intelligence Analysts work. She pulls up a piece of intelligence she thought was interesting. It shows that APTs are interested in acquiring hardware tokens used for accessing DIB networks. Those are generally controlled items, how could the APT get a hold of one of those?
 > 
 > DoD sometimes sends copies of procurement records for controlled items to the NSA for analysis. Aaliyah pulls up the records but realizes it’s in a file format she’s not familiar with. Can you help her look for anything suspicious?
@@ -22,10 +22,10 @@ nav_order: 2
 > Prompt:
 > - Provide the order id associated with the order most likely to be fraudulent.
 
-### Files Given
+## Files Given
 - DoD procurement records (shipping.db)
 
-### Identify the File
+## Identify the File
 When identifying a file I need to analyze, there are a few ways I go about it. To start, I run the `file` Linux command on it. In this case, I received the output: `shipping.db: Zip data (MIME type "application/vnd.oasis.O"?)`. With that, I decided to unzip the file and found a file called "meta.xml" that appeared to have the following metadata:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -34,13 +34,13 @@ When identifying a file I need to analyze, there are a few ways I go about it. T
 
 With that, I realized that I could open up the original file with Libre Office. Once the file was open, I saw a large table with data in it. To make it easier to work with, I took the table data from the document and put it into Libre Calc. Looking at the lines, I noticed a pattern that followed something like: company name, address, name 1, phone number 1, email 1, name 2, phone number 2, email 2, ID, date.
 
-### Parse the Records
+## Parse the Records
 After looking at the new spreadsheet, I realized that I would need a better way to organize the records. To organize the records, I created a pivot table:
 1. Insert > Pivot Table...
 2. Drag each available field on the right to "Row Fields" on the bottom left
 3. Click "OK"
 
-### The Outlier
+## The Outlier
 Looking through the entries, there were large chunks where only the id and date were changing, so I figured I would need to find the record where that wasn't the case. Combing through, I found the record:
 ```txt
 Guardian Armaments

@@ -16,7 +16,7 @@ mermaid: true
 - TOC
 {:toc}
 
-### Task Description
+## Task Description
 >  The recovered data indicates the APT is using a DNS server as a part of their operation. The triage team easily got the server running but it seems to reply to every request with errors.
 > 
 > You decide to review past SIGINT reporting on the APT. Why might the APT be targeting the Guardian Armaments JCTV firmware developers? Reporting suggests the APT has a history of procuring information including the location and movement of military personnel.
@@ -34,12 +34,12 @@ mermaid: true
 > Prompt:
 > - Enter a domain name which results in a NOERROR response. It should end with a '.' (period)
 
-### New Files From the Decrypted USB
+## New Files From the Decrypted USB
 - coredns
 - Corefile
 - microservice (Not used in this task. For task 7)
 
-### Corefiles
+## Corefiles
 The `coredns` and `microservice` files are executables while the `Corefile` file is text, so I started there. The contents are:
 ```
 .:1053 {
@@ -94,7 +94,7 @@ On USB: `629fe157c525b885439d8d48ac38b0bdc1a81ab06e22197d0e896d972879dd0d  cored
 ```
 This means that `frontend` is likely a new plugin put in by the challenge authors
 
-### Reverse Engineering
+## Reverse Engineering
 Realizing the program had been altered, I popped it into Ghidra and sighed deeply. It's a stripped go binary... Luckily, I found an interesting trick while looking for relevant code segments in the assembly. Looking for the string, "frontend" in the program showed the following results:
 ```bash
 ┌─[jamesj@parrot]─[~/Documents/codebreaker_2024/task6]
@@ -115,7 +115,7 @@ github.com/coredns/example@v0.0.0-20200925060636-a998e071a3a3/frontend.go
 =>	../../frontend	(devel)
 ```
 
-#### Unstripping
+### Unstripping
 Looking at this, I wondered if I had missed something, so I checked the coredns github just in case, and I didn't see any mention of frontend still. Interestingly, those strings at the top kind of looked like functions signatures, so I went to look at where in the code they were and what references they had in Ghidra. Ghidra just showed this in the `.rodata` segment, though:
 ```
         01dc1090 12              ??         12h
@@ -128,7 +128,7 @@ I found it strange that this string would be in here without a reference, so I l
 
 Looking for tools to restore these function names, I found [GoReSym from Mandiant](https://github.com/mandiant/GoReSym). This allowed me to put all the function names back and made it a lot easier to continue.
 
-#### What Does it Do?
+### What Does it Do?
 Looking for "frontend" in the function pane showed two main functions:
 - github.com/coredns/example.Frontend.Name
 - github.com/coredns/example.Frontend.ServeDNS
@@ -184,7 +184,7 @@ Looking at the flow, I split it up into a few key steps:
   b. Decrypt data
 3. Forward data elsewhere
 
-#### Parsing the Query Data
+### Parsing the Query Data
 `example.name2buffer`:
 ```c
 param_7 = in_RAX;
@@ -219,7 +219,7 @@ These parts are the most important ones from this function. It starts off with [
 `genSplit("xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.net-x7yfcbnc.example.com.", ".", 0, 4) -> xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
 After that, it takes the result and removes all instances of "xn--", "x", and "y". This turns that string into "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" and leaves only the characters we choose. Next, it replaces any "z"s with "=" and turns all the letters to uppercase. Lastly, it decodes it from base32. **Of note**, base32 decoders (like the one in CyberChef) will typically use the character space "A-Z0-7=". Go's base32 library mentions a separate character space: "0-9A-V=" called [HexEncoding](https://pkg.go.dev/encoding/base32#pkg-variables) that gets used for DNS contexts, and it will be used here because x, y, and z all get altered in the code.
 
-#### Encryption and Noise
+### Encryption and Noise
 Looking at the next category, the main function is called `example.NoiseRecv`. While I learned how the functions worked by looking over the code and walking through important parts in dynamic analysis (you can see me tracing function args in my [notepad](../notepad)), I feel that it's a lot easier to just look up the function name and look at the source code/docs. I started with [flynn's noise package for go](https://github.com/flynn/noise). That package does a good job showing off how the protocol works, but I was reading write-ups after the competition, and I read [a write-up by jp0x1](https://jp0x1.github.io/blog/nsa-cbc/#noise-protocol) that appears to have found the [actual source code](blob:https://noiseexplorer.com/602a6433-137a-43ff-a78b-905c4b02670a) from a website that covers the attack used later. Using the second code source also makes it easier to interact with the protocol itself.
 
 Moving back to analyzing the protocol, I was first tipped off that it may be a known overarching cryptographic protocol when I saw the cryptographic protocol string: "Noise_K_25519_ChaChaPoly_BLAKE2s". This gave the overarching protocol as well which type and which protocols it uses. The noise protocol string in particular breaks down to:
@@ -231,7 +231,7 @@ Moving back to analyzing the protocol, I was first tipped off that it may be a k
 
 Of these, the focus will be on the handshake mode because the other protocols don't have relevant flaws here.
 
-### Protocol Misuse
+## Protocol Misuse
 To understand the attack, it's important to understand how the protocol works. In short, this is what the protocol does in the code:
 
 **Variables**
@@ -288,7 +288,7 @@ This means that we just need to change the sending part of the protocol to:
   ciphertext = encryptAndHash(plaintext)
   Send e + ciphertext
 
-### Crafting a Payload
+## Crafting a Payload
 At this point, it was the final day, and I had an event, so I didn't score any points for this task. The next day, I looked at the write-up above and use the code they referenced to solve the challenge. To help read the code, the protocol would normally identify `s` as our keypair and `rs` as their keypair, but these are reversed in this case (reference the keys above if confused):
 ```go
 //...

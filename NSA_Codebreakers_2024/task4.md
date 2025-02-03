@@ -10,7 +10,7 @@ nav_order: 5
 - TOC
 {:toc}
 
-### Task Description
+## Task Description
 > Great work! With a credible threat proven, NSA's Cybersecurity Collaboration Center reaches out to GA and discloses the vulnerability with some indicators of compromise (IoCs) to scan for.
 > 
 > New scan reports in hand, GA's SOC is confident they've been breached using this attack vector. They've put in a request for support from NSA, and Barry is now tasked with assisting with the incident response.
@@ -35,7 +35,7 @@ nav_order: 5
 - Client private key used to establish a secure connection (client.key)
 - TTY audit log of a developer's shell activity (audit.log)
 
-### Talking With the Server
+## Talking With the Server
 When initially accessing the website it asks for a certificate to use. This is where the provided cert and key are necessary. To get it working in firefox, I needed to generate a pkcs12 cert using the following command before importing it: `openssl pkcs12 -export -out certificate.pfx -inkey client.key -in client.crt`. After importing the resulting certificate and going to the example link, I got the following response:
 ```json
 {
@@ -59,7 +59,7 @@ ttyaudit=1715601922 w=3 d=docker  run \033[D\033[D\033[D\033[D\033[D\033[3~\033[
 ttyaudit=1715601933 w=3 d=echo "alias ll='exa -l'" >> ~/.bashrc\x0d u=1000 s=41 id=646653 c=0x7f36
 ```
 
-### Encodings
+## Encodings
 Looking at the file, it appears to have meta data from the terminal as well as the command run itself (marked with "d="). These commands also appears to have strange characters and hex built in. After looking for "`\033[D`", I found [ANSI encoding standards](https://gist.github.com/ConnerWill/d4b6c776b509add763e17f9f113fd25b). At first, I tried to find an existing implementation, but none of them worked quite as well as I expected. `echo -e [string]` worked well for testing, but it didn't prove reliable for automation (and I wanted to ignore some as seen later).
 
 With that in mind, I decided to write my own parser for the strings and implement all the ANSI encodings that showed up:
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     print(parse(test5))
 ```
 
-### Getting the Cache Data
+## Getting the Cache Data
 With a way to parse the command's encoding, I just had to extract the commands from audit.log and receive the results from the caching server. To do that, I wrote this python program:
 ```python
 import http.client
@@ -232,7 +232,7 @@ with open("audit.log", "r") as file:
     out_file.write(']')
 ```
 
-### Finding the Anomalies
+## Finding the Anomalies
 After putting all the responses into a markdown file, I opened it up in Obsidian and started looking through them all. While looking through all the code snippets, I just added `#noted` to anything that looked off. While doing this, I noticed the line: `globals()['ga'] = __import__('g0bf597')`. Seeing that it had "ga", I figured it was at least relevant with all the other Guarding Armaments information in other tasks. It also seems to be importing an unknown library globally for seemingly no reason with the context of:
 ```md
 # Command
