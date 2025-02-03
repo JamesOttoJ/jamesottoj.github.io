@@ -30,7 +30,7 @@ nav_order: 5
 > Prompt:
 > - A maliciously altered line from a code snippet
 
-### Files Given
+## Files Given
 - Client certificate issued by the GA CA (client.crt)
 - Client private key used to establish a secure connection (client.key)
 - TTY audit log of a developer's shell activity (audit.log)
