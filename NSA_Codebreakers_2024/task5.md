@@ -511,8 +511,9 @@ if __name__ == '__main__':
 ```
 
 Looking at this code, these are the main cryptographic flaws I could identify (from top to bottom):
+
 | Flaw | Importance |
-| --- | --- |
+| ---- | ---------- |
 | 1. cryptography.hazmat library is being used | Leaves room for implementation flaws like the scenario talks about because the programmer controls every part of the cipher usage instead of relying on a secure default |
 | 2. Consistent salt | Prevents randomness and allows an attacker to identify when the same information is encrypted or even repeat the result if it gets used somewhere |
 | 3. PKDF low number of iterations | Makes the result more brute-forceable |
