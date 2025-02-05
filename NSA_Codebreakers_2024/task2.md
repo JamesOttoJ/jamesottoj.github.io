@@ -36,8 +36,8 @@ when presented with a .tar file, the first thing I always do is run `tar -xvf [f
 
 ## Setting up ZFS
 Based on [a Medium article about setting up virtual disks for ZFS]( https://medium.com/@abaddonsd/zfs-usage-with-virtual-disks-62898064a29b), I ran:
-- `dd if=/dev/zero of=~/Documents/codebreaker_2024/task2/zpool_disk.img bs=1M count=64`
-- `sudo zpool create testpool ~/Documents/codebreaker_2024/task2/zpool_disk.img`
+- `dd if=/dev/zero of=~/Documents/codebreaker_2024/task2/zpool_disk.img bs=1M count=64` (absolute path omitted for anonymity)
+- `sudo zpool create testpool ~/Documents/codebreaker_2024/task2/zpool_disk.img` (absolute path omitted for anonymity)
 - `zfs list`
 - `sudo zfs create testpool/testdisk`
 
