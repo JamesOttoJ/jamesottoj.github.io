@@ -9,7 +9,7 @@ nav_order: 1
 I am the president of the Hacking and Cybersecurity Club (HACC) at Iowa State University, and I specialize in malware reverse enginering. During my time at HACC, I have had the chance to go above and beyond coursework to meet with professionls and solve real-world cybersecurity problems. While engaging in these experiences, I found myself drawn to reverse engineering and malware analysis in particular. To show of the skills I have accrued, multiple writups are included below for challenges I solved and found interesting.
 
 [James Joseph](https://www.linkedin.com/in/james-j-410b14196/)
-contact+site@jojoseph.dev
+contact_site@jojoseph.dev
 
 ## [Resume](./James_Joseph_Resume.pdf)
 
